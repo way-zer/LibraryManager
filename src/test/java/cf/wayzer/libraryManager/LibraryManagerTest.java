@@ -7,13 +7,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class LibraryManagerTest {
-    @Test
-    public void testKotlin() {
-        assertFalse(hasKotlin());
-        LibraryManager.loadKotlinStd();
-        assertTrue(hasKotlin());
-    }
-
+    
+    //Must be last(this will change SystemClassLoader)
     @Test
     public void testMain() {
         assertFalse(hasKotlin());
