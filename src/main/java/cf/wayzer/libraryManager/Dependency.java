@@ -15,7 +15,7 @@ public class Dependency implements Cloneable {
     public String hash;
     File jarFile;
 
-    Dependency(String str) {
+    public Dependency(String str) {
         this(str, LibraryManager.MAVEN_CENTRAL);
     }
 
@@ -23,15 +23,15 @@ public class Dependency implements Cloneable {
      * @param str        gradle style dependency
      * @param repository the name you add in LibraryManager
      */
-    Dependency(String str, String repository) {
+    public Dependency(String str, String repository) {
         this(str.split(":")[0], str.split(":")[1], str.split(":")[2], repository);
     }
 
-    Dependency(String group, String name, String version) {
+    public Dependency(String group, String name, String version) {
         this(group, name, version, LibraryManager.MAVEN_CENTRAL);
     }
 
-    Dependency(String group, String name, String version, String repository) {
+    public Dependency(String group, String name, String version, String repository) {
         this.group = group;
         this.name = name;
         this.version = version;
