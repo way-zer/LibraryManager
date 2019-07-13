@@ -9,14 +9,20 @@ public class Dependency implements Cloneable {
     public String group;
     public String name;
     public String version;
+    /**
+     * sha256, set if you want check
+     */
     public String hash;
-    boolean loaded = false;
     File jarFile;
 
     Dependency(String str) {
         this(str, LibraryManager.MAVEN_CENTRAL);
     }
 
+    /**
+     * @param str        gradle style dependency
+     * @param repository the name you add in LibraryManager
+     */
     Dependency(String str, String repository) {
         this(str.split(":")[0], str.split(":")[1], str.split(":")[2], repository);
     }

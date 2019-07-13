@@ -17,6 +17,9 @@ public class LibraryManager {
     private HashMap<String, String> repositories = new HashMap<>();
     private HashMap<String, Dependency> dependencies = new HashMap<>();
 
+    /**
+     * Use "./" as rootDir
+     */
     public LibraryManager() {
         this(Paths.get("./"));
     }
@@ -33,10 +36,20 @@ public class LibraryManager {
         addRepository(JCENTER, "https://jcenter.bintray.com/");
     }
 
+    /**
+     * Add a repository
+     *
+     * @param name the name you like
+     * @param url  the url prefix
+     */
     public void addRepository(String name, String url) {
         repositories.put(name, url);
     }
 
+    /**
+     * Add dependency to this LibraryManager
+     * @param dependency the dependency you need
+     */
     public void require(Dependency dependency) {
         if (!repositories.containsKey(dependency.repository))
             throw new RuntimeException("Can't find repository,Please add first!");
@@ -46,6 +59,10 @@ public class LibraryManager {
         dependencies.put(dependency.name, dependency);
     }
 
+    /**
+     * Load and add to SystemClassLoader
+     * @see this.load()
+     */
     public void loadToClasspath() throws LibraryLoadException {
         load();
         try {
@@ -53,16 +70,19 @@ public class LibraryManager {
             Method f = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             f.setAccessible(true);
             for (Dependency d : dependencies.values()) {
-                if (!d.loaded) {
-                    f.invoke(system, d.jarFile.toURI().toURL());
-                    d.loaded = true;
-                }
+                f.invoke(system, d.jarFile.toURI().toURL());
             }
         } catch (Exception e) {
             throw new LibraryLoadException("load to classpath fail: ", e);
         }
     }
 
+    /**
+     * Load and create an {@code URLClassLoader} including all dependencies
+     * @param parent the parent classloader
+     * @return Classloader including all dependencies
+     * @see this.load()
+     */
     public ClassLoader getClassloader(ClassLoader parent) throws LibraryLoadException {
         load();
         URL[] urls = dependencies.values().stream().map((d) -> {
@@ -75,6 +95,10 @@ public class LibraryManager {
         return new URLClassLoader(urls, parent);
     }
 
+    /**
+     * Download and resolve dependencies
+     * @throws LibraryLoadException Any Exception in load
+     */
     public void load() throws LibraryLoadException {
         DownloadManager downloadManager = new DownloadManager(rootDir);
         for (Dependency d : dependencies.values()) {
@@ -82,6 +106,9 @@ public class LibraryManager {
         }
     }
 
+    /**
+     * Load {@code Dependency.KOTLIN_RUNTIME}
+     */
     public static void loadKotlinStd() {
         LibraryManager libraryManager = new LibraryManager();
         libraryManager.addMavenCentral();

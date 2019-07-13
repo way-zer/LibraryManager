@@ -1,0 +1,8 @@
+language: java
+script:
+  - ./gradlew build
+deploy:
+  provider: script
+  script: ./gradlew bintrayUpload
+  on:
+    tags: true

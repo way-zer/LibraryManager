@@ -1,3 +1,5 @@
+[ ![Download](https://api.bintray.com/packages/way-zer/maven/LibarayManager/images/download.svg) ](https://bintray.com/way-zer/maven/LibarayManager/)
+
 **A library helps you manage jvm runtime dependencies** (Such as Kotlin)
 ## Features
 * Finished in pure java (no other dependency)
