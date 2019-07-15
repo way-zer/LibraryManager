@@ -1,0 +1,12 @@
+package cf.wayzer.libraryManager;
+
+public class Repository {
+    public final static String MAVEN_CENTRAL = "mavenCentral";
+    final static String PREFIX_MAVEN_CENTRAL = "https://repo1.maven.org/maven2/";
+    public final static String JCENTER = "jcenter";
+    final static String PREFIX_JCENTER = "https://repo1.maven.org/maven2/";
+    /**
+     * Default, the first add to libraryManager
+     */
+    public final static String DEFAULT = "DEFAULT";
+}

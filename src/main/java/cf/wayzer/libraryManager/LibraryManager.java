@@ -10,9 +10,6 @@ import java.util.HashMap;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class LibraryManager {
-    public final static String MAVEN_CENTRAL = "mavenCentral";
-    public final static String JCENTER = "jcenter";
-
     private Path rootDir;
     private HashMap<String, String> repositories = new HashMap<>();
     private HashMap<String, Dependency> dependencies = new HashMap<>();
@@ -26,14 +23,17 @@ public class LibraryManager {
 
     public LibraryManager(Path rootDir) {
         this.rootDir = rootDir;
+        String env = System.getProperty("repository");
+        if (env != null && !env.isEmpty())
+            repositories.put(Repository.DEFAULT, env);
     }
 
     public void addMavenCentral() {
-        addRepository(MAVEN_CENTRAL, "https://repo1.maven.org/maven2/");
+        addRepository(Repository.MAVEN_CENTRAL, Repository.PREFIX_MAVEN_CENTRAL);
     }
 
     public void addJCenter() {
-        addRepository(JCENTER, "https://jcenter.bintray.com/");
+        addRepository(Repository.JCENTER, Repository.PREFIX_JCENTER);
     }
 
     /**
@@ -43,6 +43,8 @@ public class LibraryManager {
      * @param url  the url prefix
      */
     public void addRepository(String name, String url) {
+        if (repositories.isEmpty())
+            repositories.put(Repository.DEFAULT, url);
         repositories.put(name, url);
     }
 

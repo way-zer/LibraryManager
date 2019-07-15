@@ -4,7 +4,7 @@ import java.io.File;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class Dependency implements Cloneable {
-    public static Dependency KOTLIN_RUNTIME = new Dependency("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.41");
+    public final static Dependency KOTLIN_RUNTIME = new Dependency("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.41");
     public String repository;
     public String group;
     public String name;
@@ -16,7 +16,7 @@ public class Dependency implements Cloneable {
     File jarFile;
 
     public Dependency(String str) {
-        this(str, LibraryManager.MAVEN_CENTRAL);
+        this(str, Repository.DEFAULT);
     }
 
     /**
@@ -28,7 +28,7 @@ public class Dependency implements Cloneable {
     }
 
     public Dependency(String group, String name, String version) {
-        this(group, name, version, LibraryManager.MAVEN_CENTRAL);
+        this(group, name, version, Repository.DEFAULT);
     }
 
     public Dependency(String group, String name, String version, String repository) {
