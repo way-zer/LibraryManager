@@ -7,12 +7,14 @@ import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class LibraryManager {
     private Path rootDir;
     private HashMap<String, String> repositories = new HashMap<>();
     private HashMap<String, Dependency> dependencies = new HashMap<>();
+    private Logger logger = Logger.getLogger("LibraryManager");
 
     /**
      * Use "./" as rootDir
@@ -23,9 +25,10 @@ public class LibraryManager {
 
     public LibraryManager(Path rootDir) {
         this.rootDir = rootDir;
-        String env = System.getProperty("repository");
-        if (env != null && !env.isEmpty())
-            repositories.put(Repository.DEFAULT, env);
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
 
     public void addMavenCentral() {
@@ -43,6 +46,11 @@ public class LibraryManager {
      * @param url  the url prefix
      */
     public void addRepository(String name, String url) {
+        String env = System.getProperty("repository");
+        if (env != null && !env.isEmpty()) {
+            logger.info("Set Repository.DEFAULT to " + env);
+            repositories.put(Repository.DEFAULT, env);
+        }
         if (repositories.isEmpty())
             repositories.put(Repository.DEFAULT, url);
         repositories.put(name, url);
@@ -102,7 +110,8 @@ public class LibraryManager {
      * @throws LibraryLoadException Any Exception in load
      */
     public void load() throws LibraryLoadException {
-        DownloadManager downloadManager = new DownloadManager(rootDir);
+        logger.info("Start load dependencies,please be patient");
+        DownloadManager downloadManager = new DownloadManager(rootDir, logger);
         for (Dependency d : dependencies.values()) {
             downloadManager.download(d);
         }

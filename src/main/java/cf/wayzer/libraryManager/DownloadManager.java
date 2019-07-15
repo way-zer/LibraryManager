@@ -10,15 +10,18 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.logging.Logger;
 
 class DownloadManager {
     private Path rootDir;
+    private Logger logger;
     private static final String FILE_FORMAT = "%s-%s.jar";
     private static final String MAVEN_FORMAT = "%s%s/%s/%s/%s";
     private MessageDigest digest;
 
-    DownloadManager(Path rootDir) throws LibraryLoadException {
+    DownloadManager(Path rootDir, Logger logger) throws LibraryLoadException {
         this.rootDir = rootDir;
+        this.logger = logger;
         try {
             Files.createDirectories(rootDir);
         } catch (IOException e) {
@@ -30,6 +33,7 @@ class DownloadManager {
         String file_name = String.format(FILE_FORMAT, dependency.name.toLowerCase(), dependency.version);
         Path f = rootDir.resolve(file_name);
         if (Files.exists(f)) {
+            logger.info("Load " + file_name + " from local");
             dependency.jarFile = f.toFile();
             return;
         }
@@ -40,6 +44,7 @@ class DownloadManager {
                     dependency.group.replace(".", "/"),
                     dependency.name, dependency.version, file_name
             ));
+            logger.info("Start download " + file_name + " from " + url);
             URLConnection con = url.openConnection();
             try (InputStream in = con.getInputStream()) {
                 byte[] bs = readInputStream(in);
@@ -55,6 +60,7 @@ class DownloadManager {
                                 "Actual: " + hash);
                 }
                 Files.write(f, bs);
+                logger.info("End download " + file_name);
                 dependency.jarFile = f.toFile();
             }
         } catch (IOException | NoSuchAlgorithmException e) {
