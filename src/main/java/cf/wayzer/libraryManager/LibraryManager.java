@@ -75,15 +75,27 @@ public class LibraryManager {
      */
     public void loadToClasspath() throws LibraryLoadException {
         load();
+        if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
+            loadToClassLoader((URLClassLoader) ClassLoader.getSystemClassLoader());
+        } else
+            throw new LibraryLoadException("load to classpath fail: SystemClassLoader is not URLClassLoader");
+    }
+
+    /**
+     * Load and add to URLClassLoader
+     *
+     * @see this.load()
+     */
+    public void loadToClassLoader(URLClassLoader ucl) throws LibraryLoadException {
+        load();
         try {
-            URLClassLoader system = (URLClassLoader) ClassLoader.getSystemClassLoader();
             Method f = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             f.setAccessible(true);
             for (Dependency d : dependencies.values()) {
-                f.invoke(system, d.jarFile.toURI().toURL());
+                f.invoke(ucl, d.jarFile.toURI().toURL());
             }
         } catch (Exception e) {
-            throw new LibraryLoadException("load to classpath fail: ", e);
+            throw new LibraryLoadException("load to ClassLoader fail: ", e);
         }
     }
 
