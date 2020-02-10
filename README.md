@@ -1,4 +1,5 @@
-[ ![Download](https://api.bintray.com/packages/way-zer/maven/LibraryManager/images/download.svg) ](https://bintray.com/way-zer/maven/LibraryManager/)
+![Test](https://github.com/way-zer/LibraryManager/workflows/Test/badge.svg)
+
 
 **A library helps you manage jvm runtime dependencies** (Such as Kotlin)
 ## Features
