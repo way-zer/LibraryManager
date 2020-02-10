@@ -3,8 +3,8 @@ package cf.wayzer.libraryManager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -40,12 +40,19 @@ class DownloadManager {
 
         try {
             URL url = new URL(String.format(MAVEN_FORMAT,
-                    dependency.repository,
+                    dependency.repositoryUrl,
                     dependency.group.replace(".", "/"),
                     dependency.name, dependency.version, file_name
             ));
             logger.info("Start download " + file_name + " from " + url);
-            URLConnection con = url.openConnection();
+            HttpURLConnection con = (HttpURLConnection) url.openConnection();
+            while (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
+                String newUrl = con.getHeaderField("Location");
+                if (newUrl == null || newUrl.isEmpty())
+                    throw new LibraryLoadException("Download Fail: Empty Redirect");
+                logger.info("==> Redirect to " + newUrl);
+                con = (HttpURLConnection) new URL(newUrl).openConnection();
+            }
             try (InputStream in = con.getInputStream()) {
                 byte[] bs = readInputStream(in);
                 if (bs.length < 1000)

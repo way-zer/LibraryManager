@@ -13,6 +13,7 @@ public class Dependency implements Cloneable {
      * sha256, set if you want check
      */
     public String hash;
+    String repositoryUrl;
     File jarFile;
 
     public Dependency(String str) {
@@ -21,7 +22,7 @@ public class Dependency implements Cloneable {
 
     /**
      * @param str        gradle style dependency
-     * @param repository the name you add in LibraryManager
+     * @param repository the name you add in LibraryManager Or repositoryUrl
      */
     public Dependency(String str, String repository) {
         this(str.split(":")[0], str.split(":")[1], str.split(":")[2], repository);
@@ -55,6 +56,7 @@ public class Dependency implements Cloneable {
                 ", name='" + name + '\'' +
                 ", version='" + version + '\'' +
                 ", hash='" + hash + '\'' +
+                ", repositoryUrl='" + repositoryUrl + '\'' +
                 ", jarFile=" + jarFile +
                 '}';
     }

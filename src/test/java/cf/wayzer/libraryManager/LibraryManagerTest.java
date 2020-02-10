@@ -7,7 +7,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class LibraryManagerTest {
-    
+    @Test
+    public void testDownload() throws Exception {
+        LibraryManager inst = new LibraryManager();
+        inst.addAliYunMirror();
+        inst.require(Dependency.KOTLIN_RUNTIME);
+        inst.load();
+    }
+
     //Must be last(this will change SystemClassLoader)
     @Test
     public void testMain() {

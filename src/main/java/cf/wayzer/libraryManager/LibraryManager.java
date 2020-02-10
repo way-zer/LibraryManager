@@ -39,6 +39,10 @@ public class LibraryManager {
         addRepository(Repository.JCENTER, Repository.PREFIX_JCENTER);
     }
 
+    public void addAliYunMirror() {
+        addRepository(Repository.AliYunMirror, Repository.PREFIX_AliYunMirror);
+    }
+
     /**
      * Add a repository
      *
@@ -61,9 +65,13 @@ public class LibraryManager {
      * @param dependency the dependency you need
      */
     public void require(Dependency dependency) {
-        if (!repositories.containsKey(dependency.repository))
-            throw new RuntimeException("Can't find repository,Please add first!");
-        dependency.repository = repositories.get(dependency.repository);
+        if (!dependency.repository.startsWith("http")) {
+            if (!repositories.containsKey(dependency.repository))
+                throw new RuntimeException("Can't find repository,Please add first!");
+            dependency.repositoryUrl = repositories.get(dependency.repository);
+        } else {
+            dependency.repositoryUrl = dependency.repository;
+        }
         if (dependencies.containsKey(dependency.name))
             throw new RuntimeException("This dependency has required:" + dependency);
         dependencies.put(dependency.name, dependency);
@@ -74,19 +82,22 @@ public class LibraryManager {
      * @see this.load()
      */
     public void loadToClasspath() throws LibraryLoadException {
-        load();
         if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
-            loadToClassLoader((URLClassLoader) ClassLoader.getSystemClassLoader());
+            loadToClassLoader(ClassLoader.getSystemClassLoader());
         } else
-            throw new LibraryLoadException("load to classpath fail: SystemClassLoader is not URLClassLoader");
+            throw new LibraryLoadException("load to classpath fail: SystemClassLoader is not URLClassLoader,Maybe you are Java 11 or above");
     }
 
     /**
      * Load and add to URLClassLoader
      *
+     * @param ucl Must be URLClassLoader
      * @see this.load()
      */
-    public void loadToClassLoader(URLClassLoader ucl) throws LibraryLoadException {
+    public void loadToClassLoader(ClassLoader ucl) throws LibraryLoadException {
+        if (!(ucl instanceof URLClassLoader)) {
+            throw new LibraryLoadException("load to classpath fail: Classloader" + ucl + " is not URLClassLoader");
+        }
         load();
         try {
             Method f = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
