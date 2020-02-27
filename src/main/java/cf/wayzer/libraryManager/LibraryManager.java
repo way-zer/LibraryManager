@@ -79,7 +79,9 @@ public class LibraryManager {
 
     /**
      * Load and add to SystemClassLoader
-     * @see this.load()
+     *
+     * @throws LibraryLoadException Any Load Error
+     * @see LibraryManager#load()
      */
     public void loadToClasspath() throws LibraryLoadException {
         if (ClassLoader.getSystemClassLoader() instanceof URLClassLoader) {
@@ -92,7 +94,8 @@ public class LibraryManager {
      * Load and add to URLClassLoader
      *
      * @param ucl Must be URLClassLoader
-     * @see this.load()
+     * @see LibraryManager#load()
+     * @throws LibraryLoadException Any Load Error
      */
     public void loadToClassLoader(ClassLoader ucl) throws LibraryLoadException {
         if (!(ucl instanceof URLClassLoader)) {
@@ -113,8 +116,9 @@ public class LibraryManager {
     /**
      * Load and create an {@code URLClassLoader} including all dependencies
      * @param parent the parent classloader
+     * @see LibraryManager#load()
+     * @throws LibraryLoadException Any Load Error
      * @return Classloader including all dependencies
-     * @see this.load()
      */
     public ClassLoader getClassloader(ClassLoader parent) throws LibraryLoadException {
         load();
