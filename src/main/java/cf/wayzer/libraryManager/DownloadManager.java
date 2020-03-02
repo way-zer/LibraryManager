@@ -16,7 +16,7 @@ class DownloadManager {
     private Path rootDir;
     private Logger logger;
     private static final String FILE_FORMAT = "%s-%s.jar";
-    private static final String MAVEN_FORMAT = "%s%s/%s/%s/%s";
+    private static final String MAVEN_FORMAT = "%s%s/%s/%s/%s-%s.jar";
     private MessageDigest digest;
 
     DownloadManager(Path rootDir, Logger logger) throws LibraryLoadException {
@@ -42,7 +42,7 @@ class DownloadManager {
             URL url = new URL(String.format(MAVEN_FORMAT,
                     dependency.repositoryUrl,
                     dependency.group.replace(".", "/"),
-                    dependency.name, dependency.version, file_name
+                    dependency.name, dependency.version, dependency.name, dependency.version
             ));
             logger.info("Start download " + file_name + " from " + url);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();

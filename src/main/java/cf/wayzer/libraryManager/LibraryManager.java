@@ -1,12 +1,15 @@
 package cf.wayzer.libraryManager;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
@@ -114,11 +117,27 @@ public class LibraryManager {
     }
 
     /**
-     * Load and create an {@code URLClassLoader} including all dependencies
-     * @param parent the parent classloader
-     * @see LibraryManager#load()
+     * Load and getAllJarFile
+     *
      * @throws LibraryLoadException Any Load Error
+     * @see LibraryManager#load()
+     */
+    public List<File> loadFiles() throws LibraryLoadException {
+        load();
+        ArrayList<File> ret = new ArrayList<>();
+        for (Dependency d : dependencies.values()) {
+            ret.add(d.jarFile);
+        }
+        return ret;
+    }
+
+    /**
+     * Load and create an {@code URLClassLoader} including all dependencies
+     *
+     * @param parent the parent classloader
      * @return Classloader including all dependencies
+     * @throws LibraryLoadException Any Load Error
+     * @see LibraryManager#load()
      */
     public ClassLoader getClassloader(ClassLoader parent) throws LibraryLoadException {
         load();
