@@ -3,8 +3,7 @@ package cf.wayzer.libraryManager;
 import example.KotlinMainKt;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class LibraryManagerTest {
     @Test
@@ -13,6 +12,14 @@ public class LibraryManagerTest {
         inst.addAliYunMirror();
         inst.require(Dependency.KOTLIN_RUNTIME);
         inst.load();
+    }
+
+    @Test
+    public void testSelfFirstClassLoader() throws Exception {
+        LibraryManager inst = new LibraryManager();
+        Class<?> childClass = inst.createSelfFirstClassloader(null, name ->
+                name.startsWith("cf.wayzer")).loadClass("cf.wayzer.libraryManager.LibraryManager");
+        assertNotSame(LibraryManager.class, childClass);
     }
 
     //Must be last(this will change SystemClassLoader)
