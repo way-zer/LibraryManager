@@ -2,7 +2,7 @@ package cf.wayzer.libraryManager;
 
 import java.io.File;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess"})
 public class Dependency implements Cloneable {
     public final static Dependency KOTLIN_RUNTIME = new Dependency("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.41");
     public String repository;
@@ -13,6 +13,7 @@ public class Dependency implements Cloneable {
      * sha256, set if you want check
      */
     public String hash;
+
     String repositoryUrl;
     File jarFile;
 
@@ -37,6 +38,18 @@ public class Dependency implements Cloneable {
         this.name = name;
         this.version = version;
         this.repository = repository;
+    }
+
+    public String getRepositoryUrl() {
+        if (repositoryUrl == null)
+            throw new Error("LibraryManager.require first");
+        return repositoryUrl;
+    }
+
+    public File getJarFile() {
+        if (jarFile == null)
+            throw new Error("LibraryManager.require first");
+        return jarFile;
     }
 
     @Override

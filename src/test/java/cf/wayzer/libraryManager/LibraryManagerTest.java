@@ -25,7 +25,8 @@ public class LibraryManagerTest {
 
     private boolean hasKotlin() {
         try {
-            return Class.forName("kotlin.Lazy") != null;
+            Class.forName("kotlin.Lazy");
+            return true;
         } catch (ClassNotFoundException e) {
             return false;
         }

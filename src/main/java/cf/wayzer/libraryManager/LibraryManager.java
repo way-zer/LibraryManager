@@ -65,6 +65,7 @@ public class LibraryManager {
 
     /**
      * Add dependency to this LibraryManager
+     *
      * @param dependency the dependency you need
      */
     public void require(Dependency dependency) {
@@ -97,8 +98,8 @@ public class LibraryManager {
      * Load and add to URLClassLoader
      *
      * @param ucl Must be URLClassLoader
-     * @see LibraryManager#load()
      * @throws LibraryLoadException Any Load Error
+     * @see LibraryManager#load()
      */
     public void loadToClassLoader(ClassLoader ucl) throws LibraryLoadException {
         if (!(ucl instanceof URLClassLoader)) {
@@ -153,6 +154,7 @@ public class LibraryManager {
 
     /**
      * Download and resolve dependencies
+     *
      * @throws LibraryLoadException Any Exception in load
      */
     public void load() throws LibraryLoadException {

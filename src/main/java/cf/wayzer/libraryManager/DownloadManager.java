@@ -13,8 +13,8 @@ import java.util.Base64;
 import java.util.logging.Logger;
 
 class DownloadManager {
-    private Path rootDir;
-    private Logger logger;
+    private final Path rootDir;
+    private final Logger logger;
     private static final String FILE_FORMAT = "%s-%s.jar";
     private static final String MAVEN_FORMAT = "%s%s/%s/%s/%s-%s.jar";
     private MessageDigest digest;
@@ -45,13 +45,17 @@ class DownloadManager {
                     dependency.name, dependency.version, dependency.name, dependency.version
             ));
             logger.info("Start download " + file_name + " from " + url);
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            while (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
-                String newUrl = con.getHeaderField("Location");
-                if (newUrl == null || newUrl.isEmpty())
-                    throw new LibraryLoadException("Download Fail: Empty Redirect");
-                logger.info("==> Redirect to " + newUrl);
-                con = (HttpURLConnection) new URL(newUrl).openConnection();
+            HttpURLConnection con;
+            while (true) {
+                con = (HttpURLConnection) url.openConnection();
+                con.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+                if (con.getResponseCode() == 301 || con.getResponseCode() == 302) {
+                    String newUrl = con.getHeaderField("Location");
+                    if (newUrl == null || newUrl.isEmpty())
+                        throw new LibraryLoadException("Download Fail: Empty Redirect");
+                    logger.info("==> Redirect to " + newUrl);
+                    url = new URL(newUrl);
+                } else break;
             }
             try (InputStream in = con.getInputStream()) {
                 byte[] bs = readInputStream(in);
