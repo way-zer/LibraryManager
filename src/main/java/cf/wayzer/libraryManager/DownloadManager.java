@@ -1,8 +1,6 @@
 package cf.wayzer.libraryManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
@@ -58,35 +56,45 @@ class DownloadManager {
                 } else break;
             }
             try (InputStream in = con.getInputStream()) {
-                byte[] bs = readInputStream(in);
-                if (bs.length < 1000)
-                    throw new LibraryLoadException("Download Fail: can't read all! \n" + dependency);
                 if (dependency.hash != null) {
                     if (digest == null) digest = MessageDigest.getInstance("SHA-256");
-                    String hash = Base64.getEncoder().encodeToString(digest.digest(bs));
-                    if (!dependency.hash.contentEquals(hash))
-                        throw new LibraryLoadException("Downloaded file had an invalid hash.\n" +
-                                dependency + "\n" +
-                                "Expected: " + dependency.hash + "\n" +
-                                "Actual: " + hash);
+                    digest.reset();
                 }
-                Files.write(f, bs);
-                logger.info("End download " + file_name);
-                dependency.jarFile = f.toFile();
+                File file = readInputStream(in, digest);
+                try {
+                    if (file.length() < 1000)
+                        throw new LibraryLoadException("Download Fail: can't read all! \n" + dependency);
+                    if (dependency.hash != null) {
+                        String hash = Base64.getEncoder().encodeToString(digest.digest());
+                        if (!dependency.hash.contentEquals(hash))
+                            throw new LibraryLoadException("Downloaded file had an invalid hash.\n" +
+                                    dependency + "\n" +
+                                    "Expected: " + dependency.hash + "\n" +
+                                    "Actual: " + hash);
+                    }
+                    Files.move(file.toPath(), f);
+                    logger.info("End download " + file_name);
+                    dependency.jarFile = f.toFile();
+                } finally {
+                    //noinspection ResultOfMethodCallIgnored
+                    file.delete();
+                }
             }
         } catch (IOException | NoSuchAlgorithmException e) {
             throw new LibraryLoadException("Download Fail:", e);
         }
     }
 
-    private static byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buffer = new byte[10 * 1024];
-        int len;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        while ((len = inputStream.read(buffer)) != -1) {
-            bos.write(buffer, 0, len);
+    private static File readInputStream(InputStream inputStream, MessageDigest digest) throws IOException {
+        File tmpF = File.createTempFile("download", ".jar.tmp");
+        try (OutputStream outputStream = new FileOutputStream(tmpF)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) != -1) {
+                if (digest != null) digest.update(buffer, 0, len);
+                outputStream.write(buffer, 0, len);
+            }
         }
-        bos.close();
-        return bos.toByteArray();
+        return tmpF;
     }
 }
