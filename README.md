@@ -6,6 +6,8 @@
 * Download from maven Repository
 * Add dependencies into Classpath
 * Get a classloader with dependencies you need
+## Env
+MAVEN_REPOSITORY :replace the default repository (default: the first repository added)
 ## Example
 #### Usage
 ```java

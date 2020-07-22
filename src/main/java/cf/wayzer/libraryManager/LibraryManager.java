@@ -53,7 +53,7 @@ public class LibraryManager {
      * @param url  the url prefix
      */
     public void addRepository(String name, String url) {
-        String env = System.getProperty("repository");
+        String env = System.getenv("MAVEN_REPOSITORY");
         if (env != null && !env.isEmpty()) {
             logger.info("Set Repository.DEFAULT to " + env);
             repositories.put(Repository.DEFAULT, env);
@@ -190,7 +190,7 @@ public class LibraryManager {
      */
     public static void loadKotlinStd() {
         LibraryManager libraryManager = new LibraryManager();
-        libraryManager.addMavenCentral();
+        libraryManager.addJCenter();
         libraryManager.require(Dependency.KOTLIN_RUNTIME);
         try {
             libraryManager.loadToClasspath();
