@@ -14,9 +14,9 @@ import java.util.logging.Logger;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class LibraryManager {
-    private Path rootDir;
-    private HashMap<String, String> repositories = new HashMap<>();
-    private HashMap<String, Dependency> dependencies = new HashMap<>();
+    private final Path rootDir;
+    private final HashMap<String, String> repositories = new HashMap<>();
+    private final HashMap<String, Dependency> dependencies = new HashMap<>();
     private Logger logger = Logger.getLogger("LibraryManager");
 
     /**
@@ -150,6 +150,26 @@ public class LibraryManager {
             }
         }).toArray(URL[]::new);
         return new URLClassLoader(urls, parent);
+    }
+
+    /**
+     * Load and create an {@code SelfFirstClassLoader} including all dependencies
+     *
+     * @param parent the parent classloader
+     * @return Classloader including all dependencies
+     * @throws LibraryLoadException Any Load Error
+     * @see LibraryManager#load()
+     */
+    public ClassLoader createSelfFirstClassloader(ClassLoader parent, SelfFirstClassLoader.Filter filter) throws LibraryLoadException {
+        load();
+        URL[] urls = dependencies.values().stream().map((d) -> {
+            try {
+                return d.jarFile.toURI().toURL();
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }).toArray(URL[]::new);
+        return new SelfFirstClassLoader(urls, parent, filter);
     }
 
     /**
