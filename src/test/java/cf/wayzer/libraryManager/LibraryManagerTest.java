@@ -18,7 +18,8 @@ public class LibraryManagerTest {
     public void testSelfFirstClassLoader() throws Exception {
         LibraryManager inst = new LibraryManager();
         Class<?> childClass = inst.createSelfFirstClassloader(null, name ->
-                name.startsWith("cf.wayzer")).loadClass("cf.wayzer.libraryManager.LibraryManager");
+                name.startsWith("cf.wayzer")
+        ).loadClass("cf.wayzer.libraryManager.LibraryManager");
         assertNotSame(LibraryManager.class, childClass);
     }
 

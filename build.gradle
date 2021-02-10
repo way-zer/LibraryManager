@@ -3,11 +3,22 @@ import org.gradle.api.tasks.bundling.Jar
 plugins {
     id 'java'
     id "org.jetbrains.kotlin.jvm" version "1.3.41"
+    id "me.qoomon.git-versioning" version "2.1.1"
     id "com.jfrog.bintray" version "1.8.4"
 }
 apply plugin: "maven-publish"
 group 'cf.wayzer'
-version '1.3.2'
+version '1.4'
+
+gitVersioning.apply{
+    tag{
+        pattern = "v(?<tagVersion>[0-9].*)"
+        versionFormat = "\${tagVersion}"
+    }
+    commit{
+        versionFormat = "\${commit.short}-SNAPSHOT"
+    }
+}
 
 sourceCompatibility = 1.8
 
