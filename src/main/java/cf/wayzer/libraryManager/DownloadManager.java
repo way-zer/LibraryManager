@@ -23,6 +23,7 @@ class DownloadManager {
         try {
             Files.createDirectories(rootDir);
         } catch (IOException e) {
+            if (Files.isDirectory(rootDir)) return;//Fix symbol link
             throw new LibraryLoadException("Can't create Dir:", e);
         }
     }
