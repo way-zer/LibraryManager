@@ -108,7 +108,8 @@ public class LibraryManager {
         }
         load();
         try {
-            if (ucl instanceof MutableURLClassLoader classLoader) {
+            if (ucl instanceof MutableURLClassLoader) {
+                MutableURLClassLoader classLoader = (MutableURLClassLoader) ucl;
                 for (Dependency d : dependencies.values()) {
                     classLoader.addURL(d.jarFile.toURI().toURL());
                 }

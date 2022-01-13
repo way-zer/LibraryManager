@@ -7,17 +7,17 @@ apply plugin: "maven-publish"
 group 'cf.wayzer'
 version '1.5'
 
-gitVersioning.apply{
-    tag{
+gitVersioning.apply {
+    tag {
         pattern = "v(?<tagVersion>[0-9].*)"
         versionFormat = "\${tagVersion}"
     }
-    commit{
+    commit {
         versionFormat = "\${commit.short}-SNAPSHOT"
     }
 }
 
-sourceCompatibility = 1.8
+sourceCompatibility = 8
 
 repositories {
     mavenCentral()
