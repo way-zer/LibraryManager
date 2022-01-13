@@ -38,8 +38,9 @@ public class LibraryManager {
         addRepository(Repository.MAVEN_CENTRAL, Repository.PREFIX_MAVEN_CENTRAL);
     }
 
+    @Deprecated
     public void addJCenter() {
-        addRepository(Repository.JCENTER, Repository.PREFIX_JCENTER);
+        addMavenCentral();
     }
 
     public void addAliYunMirror() {
@@ -198,7 +199,7 @@ public class LibraryManager {
      */
     public static void loadKotlinStd() {
         LibraryManager libraryManager = new LibraryManager();
-        libraryManager.addJCenter();
+        libraryManager.addMavenCentral();
         libraryManager.require(Dependency.KOTLIN_RUNTIME);
         try {
             libraryManager.loadToClasspath();

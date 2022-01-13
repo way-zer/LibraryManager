@@ -4,7 +4,7 @@ import java.io.File;
 
 @SuppressWarnings({"WeakerAccess"})
 public class Dependency implements Cloneable {
-    public final static Dependency KOTLIN_RUNTIME = new Dependency("org.jetbrains.kotlin", "kotlin-stdlib", "1.3.41");
+    public final static Dependency KOTLIN_RUNTIME = new Dependency("org.jetbrains.kotlin", "kotlin-stdlib", "1.6.10");
     public String repository;
     public String group;
     public String name;
