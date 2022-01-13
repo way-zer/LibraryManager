@@ -107,12 +107,20 @@ public class LibraryManager {
         }
         load();
         try {
+            if (ucl instanceof MutableURLClassLoader classLoader) {
+                for (Dependency d : dependencies.values()) {
+                    classLoader.addURL(d.jarFile.toURI().toURL());
+                }
+                return;
+            }
             Method f = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             f.setAccessible(true);
             for (Dependency d : dependencies.values()) {
                 f.invoke(ucl, d.jarFile.toURI().toURL());
             }
         } catch (Exception e) {
+            if (e instanceof IllegalAccessException)
+                logger.severe("Find IllegalAccessException, you may using java 16+. Try add jvm arguments `--add-opens java.base/java.net=ALL-UNNAMED`");
             throw new LibraryLoadException("load to ClassLoader fail: ", e);
         }
     }

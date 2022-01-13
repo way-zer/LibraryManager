@@ -3,9 +3,8 @@ package cf.wayzer.libraryManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 
-public class SelfFirstClassLoader extends URLClassLoader {
+public class SelfFirstClassLoader extends MutableURLClassLoader {
     private final Filter filter;
 
     public interface Filter {
@@ -29,7 +28,6 @@ public class SelfFirstClassLoader extends URLClassLoader {
             // First, check if the class has already been loaded
             Class<?> c = findLoadedClass(name);
             if (c == null) {
-                long t0 = System.nanoTime();
                 String path = name.replace('.', '/').concat(".class");
                 URL res = getParent().getResource(path);
                 if (res != null) {
@@ -41,8 +39,6 @@ public class SelfFirstClassLoader extends URLClassLoader {
                     }
                 }
                 c = findClass(name);//must exist in findClass
-                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t0);
-                sun.misc.PerfCounter.getFindClasses().increment();
             }
             if (resolve) {
                 resolveClass(c);
