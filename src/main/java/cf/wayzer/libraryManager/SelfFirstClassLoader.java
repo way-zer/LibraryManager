@@ -55,7 +55,7 @@ public class SelfFirstClassLoader extends MutableURLClassLoader {
         do {
             read = stream.read(buffer);
             out.write(buffer, 0, read);
-        } while (read == 8192);
+        } while (read != -1);
         return out.toByteArray();
     }
 }
