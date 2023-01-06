@@ -51,11 +51,11 @@ public class SelfFirstClassLoader extends MutableURLClassLoader {
     private static byte[] readAll(InputStream stream) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream(Math.max(8192, stream.available()));
         byte[] buffer = new byte[8192];
-        int read;
-        do {
-            read = stream.read(buffer);
+        while (true) {
+            int read = stream.read(buffer);
+            if (read == -1) break;
             out.write(buffer, 0, read);
-        } while (read != -1);
+        }
         return out.toByteArray();
     }
 }
