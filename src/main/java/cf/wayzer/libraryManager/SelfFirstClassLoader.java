@@ -30,7 +30,10 @@ public class SelfFirstClassLoader extends MutableURLClassLoader {
             Class<?> c = findLoadedClass(name);
             if (c == null) {
                 String path = name.replace('.', '/').concat(".class");
-                URL res = getParent().getResource(path);
+                //search self first
+                URL res = findResource(path);
+                //try parent
+                if (res == null) res = getResource(path);
                 if (res != null) {
                     try (InputStream stream = res.openStream()) {
                         byte[] bs = readAll(stream);
