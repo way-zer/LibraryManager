@@ -119,7 +119,7 @@ public class LibraryManager {
             try {
                 f.setAccessible(true);
             } catch (Exception e) {
-                logger.severe("Fail to setAccessible, you may using java 16+. Try add jvm arguments `--add-opens java.base/java.net=ALL-UNNAMED`");
+                logger.severe("Fail to setAccessible, you may be using java 16+. Try add jvm arguments `--add-opens java.base/java.net=ALL-UNNAMED`");
                 throw e;
             }
             for (Dependency d : dependencies.values()) {

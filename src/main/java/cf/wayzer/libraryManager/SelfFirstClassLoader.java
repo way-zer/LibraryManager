@@ -1,5 +1,6 @@
 package cf.wayzer.libraryManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -32,8 +33,8 @@ public class SelfFirstClassLoader extends MutableURLClassLoader {
                 URL res = getParent().getResource(path);
                 if (res != null) {
                     try (InputStream stream = res.openStream()) {
-                        byte[] bs = new byte[stream.available()];
-                        return defineClass(name, bs, 0, stream.read(bs));
+                        byte[] bs = readAll(stream);
+                        return defineClass(name, bs, 0, bs.length);
                     } catch (IOException e) {
                         throw new ClassNotFoundException("Can't load Class:" + name, e);
                     }
@@ -45,5 +46,16 @@ public class SelfFirstClassLoader extends MutableURLClassLoader {
             }
             return c;
         }
+    }
+
+    private static byte[] readAll(InputStream stream) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(Math.max(8192, stream.available()));
+        byte[] buffer = new byte[8192];
+        int read;
+        do {
+            read = stream.read(buffer);
+            out.write(buffer, 0, read);
+        } while (read == 8192);
+        return out.toByteArray();
     }
 }
